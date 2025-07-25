@@ -38,7 +38,7 @@ export async function extractTextFromImage(file: File): Promise<string> {
     
     const { data: { text } } = await Tesseract.recognize(
       file,
-      'kor+eng', // 한국어 + 영어 지원
+      'kor+eng+jpn+chi_sim+chi_tra+tha', // 한국어 + 영어 + 일본어 + 중국어(간체/번체) + 태국어 지원
       {
         logger: m => {
           if (m.status === 'recognizing text') {
