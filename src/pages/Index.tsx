@@ -3,7 +3,13 @@ import { CaptureUpload } from '@/components/CaptureUpload';
 import { CategoryCard } from '@/components/CategoryCard';
 import { FilterTabs } from '@/components/FilterTabs';
 import { SearchBar } from '@/components/SearchBar';
-import { Sparkles, Zap } from 'lucide-react';
+import { Sparkles, Zap, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import heroImage from '@/assets/hero-image.jpg';
 
 // Mock data for demonstration
@@ -105,6 +111,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header with Upload Menu */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-glass border-b border-white/10">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-6 w-6 text-primary" />
+            <span className="font-semibold text-lg">Snap Sort Buddy</span>
+          </div>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="flex items-center gap-2 bg-gradient-glass backdrop-blur-glass border-white/10 hover:bg-white/10"
+              >
+                <Plus className="h-4 w-4" />
+                캡쳐 업로드
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-96 p-4 bg-gradient-glass backdrop-blur-glass border-white/10">
+              <CaptureUpload onFileUpload={handleFileUpload} />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div 
@@ -141,13 +173,6 @@ const Index = () => {
               <span className="font-medium">빠른 검색</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Upload Section - Compact */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="max-w-xl mx-auto">
-          <CaptureUpload onFileUpload={handleFileUpload} />
         </div>
       </section>
 
