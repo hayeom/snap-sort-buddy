@@ -18,12 +18,12 @@ const filterConfig = {
 export const FilterTabs = ({ activeFilter, onFilterChange, counts }: FilterTabsProps) => {
   return (
     <Tabs value={activeFilter} onValueChange={onFilterChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto p-1 bg-muted/30 backdrop-blur-glass">
+      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto p-2 bg-gradient-glass backdrop-blur-soft rounded-2xl border border-white/10">
         {Object.entries(filterConfig).map(([key, config]) => (
           <TabsTrigger
             key={key}
             value={key}
-            className="flex flex-col items-center gap-1 px-3 py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            className="flex flex-col items-center gap-1 px-4 py-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-300 rounded-xl data-[state=active]:shadow-glow"
           >
             <span className="text-lg">{config.icon}</span>
             <span className="text-xs font-medium">{config.label}</span>

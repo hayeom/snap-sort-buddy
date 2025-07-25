@@ -44,12 +44,12 @@ export const CaptureUpload = ({ onFileUpload }: CaptureUploadProps) => {
   });
 
   return (
-    <Card className="relative overflow-hidden border-2 border-dashed border-primary/30 bg-gradient-card backdrop-blur-glass transition-all duration-300 hover:border-primary/50 hover:shadow-glow">
+    <Card className="relative overflow-hidden border-2 border-dashed border-primary/20 bg-gradient-glass backdrop-blur-crisp transition-all duration-500 hover:border-primary/40 hover:shadow-elevated hover:scale-[1.02] rounded-3xl">
       <div
         {...getRootProps()}
         className={`
-          flex flex-col items-center justify-center p-12 cursor-pointer transition-all duration-300
-          ${isDragActive ? 'bg-primary/10 scale-[0.98]' : ''}
+          flex flex-col items-center justify-center p-16 cursor-pointer transition-all duration-500
+          ${isDragActive ? 'bg-primary/5 scale-[0.98]' : ''}
           ${isProcessing ? 'pointer-events-none' : ''}
         `}
       >
@@ -66,11 +66,11 @@ export const CaptureUpload = ({ onFileUpload }: CaptureUploadProps) => {
           )}
         </div>
 
-        <h3 className="text-2xl font-bold mb-3 text-center">
+        <h3 className="text-3xl font-black mb-4 text-center bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
           {isProcessing ? 'AI 분석 중...' : '캡쳐 이미지 업로드'}
         </h3>
         
-        <p className="text-muted-foreground text-center mb-6">
+        <p className="text-muted-foreground text-center mb-8 text-lg font-light leading-relaxed max-w-md">
           {isDragActive 
             ? '이미지를 여기에 놓으세요'
             : isProcessing 
@@ -83,7 +83,7 @@ export const CaptureUpload = ({ onFileUpload }: CaptureUploadProps) => {
           <Button 
             variant="outline" 
             size="lg"
-            className="bg-gradient-primary text-white border-none hover:shadow-glow transition-all duration-300"
+            className="bg-gradient-primary text-white border-none hover:shadow-glow transition-all duration-500 hover:scale-105 rounded-2xl px-8 py-6 text-lg font-semibold"
           >
             이미지 선택하기
           </Button>

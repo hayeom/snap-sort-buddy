@@ -54,7 +54,7 @@ export const CategoryCard = ({
   const config = categoryConfig[category];
 
   return (
-    <Card className="group overflow-hidden border-0 shadow-card hover:shadow-floating transition-all duration-300 hover:-translate-y-1 bg-gradient-card backdrop-blur-glass">
+    <Card className="group overflow-hidden border-0 shadow-card hover:shadow-elevated transition-all duration-500 hover:-translate-y-2 bg-gradient-glass backdrop-blur-soft rounded-3xl">
       {imageUrl && (
         <div className="relative h-48 overflow-hidden">
           <img 

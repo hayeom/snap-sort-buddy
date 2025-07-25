@@ -2,41 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Snap Sort Buddy Design System - Mobile-first, smart organization
+/* Snap Sort Buddy Design System - Modern & Sophisticated
 All colors MUST be HSL.
 */
 
-/* Beautiful gradients and colors for smart capture app */
+/* Sophisticated color palette with depth */
 :root {
-  /* Brand colors - Modern tech aesthetic */
-  --primary: 240 73% 59%;  /* Vibrant blue */
-  --primary-glow: 240 100% 70%;
-  --primary-dark: 240 73% 45%;
+  /* Premium brand colors - Modern minimalist aesthetic */
+  --primary: 220 85% 58%;  /* Sophisticated blue */
+  --primary-glow: 220 100% 75%;
+  --primary-dark: 220 85% 40%;
+  --primary-variant: 200 95% 65%;  /* Cyan accent */
   
-  /* Category colors */
-  --category-news: 15 86% 58%;     /* Orange for news */
-  --category-recipe: 142 71% 45%;   /* Green for recipes */
-  --category-shopping: 271 81% 56%; /* Purple for shopping */
-  --category-study: 198 89% 48%;    /* Blue for study */
-  --category-misc: 215 14% 52%;     /* Gray for misc */
+  /* Sophisticated category colors */
+  --category-news: 12 88% 65%;     /* Warm coral for news */
+  --category-recipe: 135 60% 55%;   /* Fresh green for recipes */
+  --category-shopping: 280 70% 68%; /* Rich purple for shopping */
+  --category-study: 210 95% 62%;    /* Bright blue for study */
+  --category-misc: 215 25% 58%;     /* Refined gray for misc */
   
-  /* Beautiful gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-  --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-  --gradient-capture: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(271 81% 56%) 100%);
+  /* Sophisticated gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-variant)));
+  --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 50%, hsl(280 70% 68%) 100%);
+  --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  --gradient-capture: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
   
-  /* Glass morphism effects */
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
+  /* Enhanced glass morphism */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   
-  /* Shadows with primary color */
-  --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
-  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --shadow-floating: 0 20px 60px rgba(0, 0, 0, 0.15);
+  /* Refined shadows with multiple layers */
+  --shadow-glow: 0 0 60px hsl(var(--primary-glow) / 0.25);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-floating: 0 20px 40px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 32px 64px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
   
-  /* Smooth transitions */
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Refined transitions with personality */
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-elastic: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-crisp: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @layer base {

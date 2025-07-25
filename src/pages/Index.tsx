@@ -111,50 +111,51 @@ const Index = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-purple-600/80" />
+        <div className="absolute inset-0 bg-gradient-hero opacity-95" />
         
-        <div className="relative container mx-auto px-4 py-20 text-center text-white">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Sparkles className="h-8 w-8 animate-pulse-glow" />
-            <h1 className="text-4xl md:text-6xl font-bold">
+        <div className="relative container mx-auto px-4 py-24 text-center text-white">
+          <div className="flex items-center justify-center gap-3 mb-8 animate-fade-in-up">
+            <Sparkles className="h-10 w-10 animate-pulse-glow text-primary-variant" />
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-white to-primary-variant bg-clip-text text-transparent">
               Snap Sort Buddy
             </h1>
-            <Zap className="h-8 w-8 animate-pulse-glow" />
+            <Zap className="h-10 w-10 animate-pulse-glow text-primary-variant" />
           </div>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-            스마트폰 캡쳐를 AI가 자동으로 분석하고 주제별로 정리해주는 똑똑한 도우미
+          <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-4xl mx-auto font-light leading-relaxed animate-fade-in-up">
+            스마트폰 캡쳐를 AI가 자동으로 분석하고 <br className="hidden md:block" />
+            주제별로 정리해주는 똑똑한 도우미
           </p>
           
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-glass px-4 py-2 rounded-full">
+          <div className="flex flex-wrap justify-center gap-6 mb-16 animate-scale-in-soft">
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
               <span className="text-2xl">🤖</span>
-              <span>AI 자동 분석</span>
+              <span className="font-medium">AI 자동 분석</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-glass px-4 py-2 rounded-full">
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
               <span className="text-2xl">📱</span>
-              <span>원본 자동 삭제</span>
+              <span className="font-medium">원본 자동 삭제</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-glass px-4 py-2 rounded-full">
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
               <span className="text-2xl">🔍</span>
-              <span>빠른 검색</span>
+              <span className="font-medium">빠른 검색</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Upload Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto">
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-3xl mx-auto">
           <CaptureUpload onFileUpload={handleFileUpload} />
         </div>
       </section>
 
       {/* Content Section */}
-      <section className="container mx-auto px-4 pb-12">
-        <div className="space-y-8">
+      <section className="container mx-auto px-4 pb-16">
+        <div className="space-y-10">
           {/* Search and Filter Controls */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between p-6 bg-gradient-glass backdrop-blur-glass rounded-2xl border border-white/10 shadow-glass">
             <SearchBar onSearch={setSearchQuery} />
             <div className="w-full lg:w-auto">
               <FilterTabs 
@@ -166,9 +167,15 @@ const Index = () => {
           </div>
 
           {/* Results Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredData.map((item) => (
-              <CategoryCard key={item.id} {...item} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredData.map((item, index) => (
+              <div 
+                key={item.id} 
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CategoryCard {...item} />
+              </div>
             ))}
           </div>
 

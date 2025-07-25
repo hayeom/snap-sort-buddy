@@ -80,16 +80,26 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-card': 'var(--gradient-card)',
-				'gradient-capture': 'var(--gradient-capture)'
+				'gradient-capture': 'var(--gradient-capture)',
+				'gradient-glass': 'var(--gradient-glass)'
 			},
 			boxShadow: {
 				'glow': 'var(--shadow-glow)',
 				'card': 'var(--shadow-card)',
-				'floating': 'var(--shadow-floating)'
+				'floating': 'var(--shadow-floating)',
+				'elevated': 'var(--shadow-elevated)',
+				'glass': 'var(--glass-shadow)'
 			},
 			backdropBlur: {
-				'glass': '20px'
+				'glass': '20px',
+				'soft': '12px',
+				'crisp': '8px'
+			},
+			spacing: {
+				'18': '4.5rem',
+				'22': '5.5rem'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -111,14 +121,24 @@ export default {
 				'slide-up': {
 					'0%': { transform: 'translateY(100%)', opacity: '0' },
 					'100%': { transform: 'translateY(0)', opacity: '1' }
+				},
+				'fade-in-up': {
+					'0%': { transform: 'translateY(30px)', opacity: '0' },
+					'100%': { transform: 'translateY(0)', opacity: '1' }
+				},
+				'scale-in-soft': {
+					'0%': { transform: 'scale(0.9)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				}
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float': 'float 3s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'slide-up': 'slide-up 0.5s ease-out'
+				'accordion-down': 'accordion-down 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'accordion-up': 'accordion-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'float': 'float 4s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+				'slide-up': 'slide-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'fade-in-up': 'fade-in-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'scale-in-soft': 'scale-in-soft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
 			}
 		}
 	},

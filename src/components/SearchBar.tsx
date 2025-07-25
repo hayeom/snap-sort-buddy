@@ -22,15 +22,15 @@ export const SearchBar = ({ onSearch, placeholder = "캡쳐 내용 검색..." }:
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-md">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-lg">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="pl-10 pr-10 h-12 bg-background/80 backdrop-blur-glass border-muted focus:border-primary transition-all duration-200"
+          className="pl-12 pr-12 h-14 bg-gradient-glass backdrop-blur-soft border-white/20 focus:border-primary transition-all duration-300 rounded-2xl text-lg"
         />
         {query && (
           <Button
