@@ -1,19 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CaptureUpload } from '@/components/CaptureUpload';
 import { CategoryCard } from '@/components/CategoryCard';
 import { FilterTabs } from '@/components/FilterTabs';
 import { SearchBar } from '@/components/SearchBar';
-import { Sparkles, Zap, Plus } from 'lucide-react';
+import { Sparkles, Zap, Plus, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { processCaptureFile, searchCaptureItems } from '@/utils/captureProcessor';
+import { CaptureItem } from '@/types/capture';
 import heroImage from '@/assets/hero-image.jpg';
 
 // Mock data for demonstration
-const mockCaptureData = [
+const mockCaptureData: CaptureItem[] = [
   {
     id: '1',
     title: 'ChatGPT로 코딩 생산성 향상하기',
@@ -25,7 +40,9 @@ const mockCaptureData = [
       'https://github.com/features/copilot'
     ],
     date: new Date('2024-01-15'),
-    imageUrl: undefined
+    imageUrl: undefined,
+    processingStatus: 'completed',
+    tags: ['AI', '개발', '생산성']
   },
   {
     id: '2',
@@ -38,7 +55,9 @@ const mockCaptureData = [
       'https://example.com/cooking-tips'
     ],
     date: new Date('2024-01-14'),
-    imageUrl: undefined
+    imageUrl: undefined,
+    processingStatus: 'completed',
+    tags: ['요리', '간단', '파스타']
   },
   {
     id: '3',
@@ -51,7 +70,9 @@ const mockCaptureData = [
       'https://example.com/compare-prices'
     ],
     date: new Date('2024-01-13'),
-    imageUrl: undefined
+    imageUrl: undefined,
+    processingStatus: 'completed',
+    tags: ['아이폰', '할인', '쇼핑']
   },
   {
     id: '4',
@@ -64,7 +85,9 @@ const mockCaptureData = [
       'https://example.com/samsung-official'
     ],
     date: new Date('2024-01-12'),
-    imageUrl: undefined
+    imageUrl: undefined,
+    processingStatus: 'completed',
+    tags: ['삼성', '갤럭시', '뉴스']
   },
   {
     id: '5',
@@ -74,14 +97,18 @@ const mockCaptureData = [
     extractedText: '다음 주 프로젝트 일정, 새로운 팀원 온보딩, 분기별 목표 설정...',
     relatedLinks: [],
     date: new Date('2024-01-11'),
-    imageUrl: undefined
+    imageUrl: undefined,
+    processingStatus: 'completed',
+    tags: ['회의', '업무', '메모']
   }
 ];
 
 const Index = () => {
+  const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [captureData] = useState(mockCaptureData);
+  const [captureData, setCaptureData] = useLocalStorage<CaptureItem[]>('snap-sort-captures', mockCaptureData);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Calculate counts for each category
   const categoryCounts = {
@@ -93,20 +120,80 @@ const Index = () => {
     misc: captureData.filter(item => item.category === 'misc').length,
   };
 
-  // Filter and search logic
-  const filteredData = captureData.filter(item => {
-    const matchesFilter = activeFilter === 'all' || item.category === activeFilter;
-    const matchesSearch = !searchQuery || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.extractedText.toLowerCase().includes(searchQuery.toLowerCase());
+  // Enhanced filter and search logic
+  const filteredData = (() => {
+    let filtered = captureData;
     
-    return matchesFilter && matchesSearch;
-  });
+    // Apply category filter
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter(item => item.category === activeFilter);
+    }
+    
+    // Apply search
+    filtered = searchCaptureItems(filtered, searchQuery);
+    
+    // Sort by date (newest first)
+    return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  })();
 
-  const handleFileUpload = (file: File) => {
-    console.log('File uploaded:', file.name);
-    // TODO: Implement AI analysis logic
+  const handleFileUpload = async (file: File) => {
+    setIsUploading(true);
+    
+    try {
+      const newItem = await processCaptureFile(file);
+      setCaptureData(prev => [newItem, ...prev]);
+      
+      toast({
+        title: "업로드 완료!",
+        description: `${file.name} 파일이 성공적으로 분석되었습니다.`,
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error('File upload error:', error);
+      toast({
+        title: "업로드 실패",
+        description: error instanceof Error ? error.message : "파일 업로드 중 오류가 발생했습니다.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteItem = (id: string) => {
+    setCaptureData(prev => prev.filter(item => item.id !== id));
+    toast({
+      title: "삭제 완료",
+      description: "캡쳐 항목이 삭제되었습니다.",
+      duration: 2000,
+    });
+  };
+
+  const handleExportData = () => {
+    const dataStr = JSON.stringify(captureData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `snap-sort-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "내보내기 완료",
+      description: "데이터가 JSON 파일로 다운로드되었습니다.",
+      duration: 3000,
+    });
+  };
+
+  const handleClearAllData = () => {
+    setCaptureData([]);
+    toast({
+      title: "데이터 삭제 완료",
+      description: "모든 캡쳐 데이터가 삭제되었습니다.",
+      duration: 3000,
+    });
   };
 
   return (
@@ -117,23 +204,66 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
             <span className="font-semibold text-lg">Snap Sort Buddy</span>
+            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+              {captureData.length}개 저장됨
+            </span>
           </div>
           
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex items-center gap-2 bg-gradient-glass backdrop-blur-glass border-white/10 hover:bg-white/10"
-              >
-                <Plus className="h-4 w-4" />
-                캡쳐 업로드
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-96 p-4 bg-gradient-glass backdrop-blur-glass border-white/10">
-              <CaptureUpload onFileUpload={handleFileUpload} />
-            </PopoverContent>
-          </Popover>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleExportData}
+              className="flex items-center gap-1"
+            >
+              <Download className="h-4 w-4" />
+              내보내기
+            </Button>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center gap-1 text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  전체삭제
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    모든 캡쳐 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
+                    삭제
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  disabled={isUploading}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  {isUploading ? '업로드 중...' : '캡쳐 업로드'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-96 p-4 bg-gradient-glass backdrop-blur-glass border-white/10">
+                <CaptureUpload onFileUpload={handleFileUpload} />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       </header>
 
@@ -199,17 +329,30 @@ const Index = () => {
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CategoryCard {...item} />
+                <CategoryCard 
+                  {...item} 
+                  onDelete={() => handleDeleteItem(item.id)}
+                />
               </div>
             ))}
           </div>
 
-          {filteredData.length === 0 && (
+          {filteredData.length === 0 && captureData.length > 0 && (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-3">🔍</div>
+              <h3 className="text-lg font-semibold mb-2">검색 결과가 없습니다</h3>
+              <p className="text-muted-foreground text-sm">
+                다른 키워드로 검색하거나 필터를 변경해보세요.
+              </p>
+            </div>
+          )}
+
+          {captureData.length === 0 && (
             <div className="text-center py-12">
               <div className="text-4xl mb-3">📱</div>
               <h3 className="text-lg font-semibold mb-2">캡쳐된 내용이 없습니다</h3>
               <p className="text-muted-foreground text-sm">
-                위에서 첫 번째 캡쳐를 업로드해보세요!
+                상단의 '캡쳐 업로드' 버튼을 눌러 첫 번째 캡쳐를 업로드해보세요!
               </p>
             </div>
           )}

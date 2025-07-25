@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Calendar, Tag, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { ExternalLink, Calendar, Tag, ChevronDown, ChevronUp, Eye, Trash2 } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,6 +18,11 @@ interface CategoryCardProps {
   relatedLinks?: string[];
   date: Date;
   imageUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  processingStatus?: 'pending' | 'processing' | 'completed' | 'error';
+  tags?: string[];
+  onDelete?: () => void;
 }
 
 const categoryConfig = {
@@ -55,7 +60,11 @@ export const CategoryCard = ({
   extractedText,
   relatedLinks = [],
   date,
-  imageUrl
+  imageUrl,
+  fileName,
+  fileSize,
+  tags = [],
+  onDelete
 }: CategoryCardProps) => {
   const config = categoryConfig[category];
   const [isExpanded, setIsExpanded] = useState(false);
@@ -95,10 +104,35 @@ export const CategoryCard = ({
           )}
         </div>
         
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4" />
-          {date.toLocaleDateString('ko-KR')}
+        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            {date.toLocaleDateString('ko-KR')}
+          </div>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDelete}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50 h-auto p-1"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
         </div>
+        
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {tags.map((tag, index) => (
+              <span 
+                key={index}
+                className="text-xs px-2 py-1 bg-muted/50 rounded-full text-muted-foreground"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4">

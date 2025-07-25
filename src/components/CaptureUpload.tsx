@@ -17,30 +17,19 @@ export const CaptureUpload = ({ onFileUpload }: CaptureUploadProps) => {
     const file = acceptedFiles[0];
     if (file) {
       setIsProcessing(true);
-      onFileUpload(file);
       
-      toast({
-        title: "캡쳐 분석 중",
-        description: "AI가 이미지를 분석하고 있습니다...",
-      });
-
-      // Simulate processing time
-      setTimeout(() => {
-        setIsProcessing(false);
-        toast({
-          title: "분석 완료!",
-          description: "캡쳐가 성공적으로 정리되었습니다.",
-        });
-      }, 2000);
+      // Call the parent's upload handler directly
+      onFileUpload(file);
     }
-  }, [onFileUpload, toast]);
+  }, [onFileUpload]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.gif']
     },
-    multiple: false
+    multiple: false,
+    maxSize: 10 * 1024 * 1024 // 10MB
   });
 
   return (
