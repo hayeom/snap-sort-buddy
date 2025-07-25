@@ -3,6 +3,7 @@ import { CaptureUpload } from '@/components/CaptureUpload';
 import { CategoryCard } from '@/components/CategoryCard';
 import { FilterTabs } from '@/components/FilterTabs';
 import { SearchBar } from '@/components/SearchBar';
+import { AutoCapture } from '@/components/AutoCapture';
 import { Sparkles, Zap, Plus, Download, Trash2, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { OpenAISettings } from '@/components/OpenAISettings';
@@ -307,6 +308,11 @@ const Index = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Auto Capture Section */}
+      <section className="container mx-auto px-4 py-8">
+        <AutoCapture onNewCapture={(item) => setCaptureData(prev => [item, ...prev])} />
       </section>
 
       {/* Main Content Section */}
