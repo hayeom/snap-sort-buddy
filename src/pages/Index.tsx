@@ -144,14 +144,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Upload Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto">
+      {/* Upload Section - Compact */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="max-w-xl mx-auto">
           <CaptureUpload onFileUpload={handleFileUpload} />
         </div>
       </section>
 
-      {/* Content Section */}
+      {/* Main Content Section */}
       <section className="container mx-auto px-4 pb-16">
         <div className="space-y-10">
           {/* Search and Filter Controls */}
@@ -180,11 +180,11 @@ const Index = () => {
           </div>
 
           {filteredData.length === 0 && (
-            <div className="text-center py-16">
-              <div className="text-6xl mb-4">📱</div>
-              <h3 className="text-xl font-semibold mb-2">아직 정리된 캡쳐가 없습니다</h3>
-              <p className="text-muted-foreground">
-                첫 번째 캡쳐를 업로드해서 AI의 똑똑한 정리 기능을 체험해보세요!
+            <div className="text-center py-12">
+              <div className="text-4xl mb-3">📱</div>
+              <h3 className="text-lg font-semibold mb-2">캡쳐된 내용이 없습니다</h3>
+              <p className="text-muted-foreground text-sm">
+                위에서 첫 번째 캡쳐를 업로드해보세요!
               </p>
             </div>
           )}
