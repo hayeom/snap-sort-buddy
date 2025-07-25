@@ -1,4 +1,5 @@
 import { pipeline } from '@huggingface/transformers';
+import Tesseract from 'tesseract.js';
 
 let classifier: any = null;
 let embedder: any = null;
@@ -30,42 +31,50 @@ export async function initializeAI() {
   }
 }
 
-// Simulate OCR (in real app, you'd use Tesseract.js or similar)
+// Real OCR using Tesseract.js
 export async function extractTextFromImage(file: File): Promise<string> {
-  // For demo purposes, we'll simulate OCR based on filename and image analysis
-  const fileName = file.name.toLowerCase();
-  
-  // Simulate different types of content based on filename
-  if (fileName.includes('recipe') || fileName.includes('food')) {
-    return `재료: 닭가슴살 200g, 양파 1개, 마늘 3쪽, 간장 2큰술, 설탕 1큰술
-조리법: 1. 닭가슴살을 한입 크기로 자른다 2. 양파와 마늘을 썰어 준비한다 3. 팬에 기름을 두르고 닭가슴살을 볶는다 4. 양파와 마늘을 넣고 볶는다 5. 간장과 설탕을 넣고 조린다`;
-  } else if (fileName.includes('news') || fileName.includes('article')) {
-    return `[속보] 새로운 AI 기술 발표
-삼성전자가 오늘 새로운 인공지능 칩셋을 발표했습니다. 이번 칩셋은 기존 대비 30% 향상된 성능을 보여주며, 스마트폰과 태블릿에 탑재될 예정입니다. 관련 주가는 3% 상승했습니다.`;
-  } else if (fileName.includes('shop') || fileName.includes('price')) {
-    return `아이폰 15 Pro 할인 이벤트
-정가: 1,550,000원
-할인가: 1,240,000원 (20% 할인)
-배송: 무료배송
-혜택: 케이스 + 필름 증정
-기간: 2024년 2월 29일까지`;
-  } else if (fileName.includes('study') || fileName.includes('note')) {
-    return `React Hooks 정리
-useState: 상태 관리
-useEffect: 생명주기 관리  
-useContext: 전역 상태
-useMemo: 메모이제이션
-useCallback: 함수 메모이제이션
-커스텀 훅: 로직 재사용`;
-  }
-  
-  // Default generic content
-  return `이미지에서 추출된 텍스트:
+  try {
+    console.log('🔍 실제 OCR 텍스트 추출 시작...');
+    
+    const { data: { text } } = await Tesseract.recognize(
+      file,
+      'kor+eng', // 한국어 + 영어 지원
+      {
+        logger: m => {
+          if (m.status === 'recognizing text') {
+            console.log(`OCR 진행률: ${(m.progress * 100).toFixed(1)}%`);
+          }
+        }
+      }
+    );
+    
+    // 추출된 텍스트 정리
+    const cleanedText = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join('\n');
+    
+    console.log('✅ OCR 텍스트 추출 완료');
+    
+    if (cleanedText.length < 10) {
+      return `이미지에서 텍스트를 감지할 수 없습니다.
 파일명: ${file.name}
 크기: ${(file.size / 1024).toFixed(1)}KB
 업로드 시간: ${new Date().toLocaleString('ko-KR')}
 
-실제 OCR 기능을 원하시면 Tesseract.js 라이브러리를 추가하거나 Google Vision API를 연동할 수 있습니다.`;
+텍스트가 포함된 이미지를 업로드해주세요.`;
+    }
+    
+    return cleanedText;
+  } catch (error) {
+    console.error('OCR 오류:', error);
+    return `OCR 처리 중 오류가 발생했습니다.
+파일명: ${file.name}
+오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}
+
+다시 시도해주세요.`;
+  }
 }
 
 // Classify text into categories using AI
