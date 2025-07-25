@@ -3,8 +3,9 @@ import { CaptureUpload } from '@/components/CaptureUpload';
 import { CategoryCard } from '@/components/CategoryCard';
 import { FilterTabs } from '@/components/FilterTabs';
 import { SearchBar } from '@/components/SearchBar';
-import { Sparkles, Zap, Plus, Download, Trash2 } from 'lucide-react';
+import { Sparkles, Zap, Plus, Download, Trash2, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { OpenAISettings } from '@/components/OpenAISettings';
 import { useToast } from '@/components/ui/use-toast';
 import {
   Popover,
@@ -210,6 +211,8 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            <OpenAISettings />
+            
             <Button 
               variant="outline" 
               size="sm"

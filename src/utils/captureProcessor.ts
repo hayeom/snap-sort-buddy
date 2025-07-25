@@ -1,57 +1,93 @@
 import { CaptureItem } from '@/types/capture';
+import { 
+  extractTextFromImage, 
+  classifyText, 
+  generateSummary, 
+  extractRelevantLinks, 
+  generateTags,
+  initializeAI 
+} from './aiProcessor';
 
-// 임시 AI 분석 시뮬레이션 함수
+// Initialize AI when the module loads
+let aiInitialized = false;
+export const ensureAIInitialized = async () => {
+  if (!aiInitialized) {
+    console.log('Initializing AI for the first time...');
+    aiInitialized = await initializeAI();
+  }
+  return aiInitialized;
+};
+
+// Enhanced AI-powered capture processing
 export const processCaptureFile = async (file: File): Promise<CaptureItem> => {
-  // 파일 크기 제한 체크 (10MB)
+  // File validation
   if (file.size > 10 * 1024 * 1024) {
     throw new Error('파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.');
   }
 
-  // 지원하는 파일 형식 체크
   const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   if (!supportedTypes.includes(file.type)) {
     throw new Error('지원하지 않는 파일 형식입니다. JPEG, PNG, WebP, GIF 파일을 업로드해주세요.');
   }
 
-  // 이미지 URL 생성
+  // Ensure AI is initialized
+  await ensureAIInitialized();
+
+  // Create image URL for display
   const imageUrl = URL.createObjectURL(file);
-
-  // 파일명에서 간단한 분류 추측
-  const fileName = file.name.toLowerCase();
-  let category: CaptureItem['category'] = 'misc';
-  let title = file.name.replace(/\.[^/.]+$/, ''); // 확장자 제거
-
-  // 간단한 키워드 기반 분류
-  if (fileName.includes('recipe') || fileName.includes('food') || fileName.includes('요리')) {
-    category = 'recipe';
-    title = '레시피 - ' + title;
-  } else if (fileName.includes('news') || fileName.includes('뉴스')) {
-    category = 'news';
-    title = '뉴스 - ' + title;
-  } else if (fileName.includes('shop') || fileName.includes('쇼핑') || fileName.includes('price')) {
-    category = 'shopping';
-    title = '쇼핑 - ' + title;
-  } else if (fileName.includes('study') || fileName.includes('학습') || fileName.includes('book')) {
-    category = 'study';
-    title = '학습 - ' + title;
-  }
-
-  // 시뮬레이션된 처리 지연
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  console.log('🤖 AI 분석 시작:', file.name);
+  
+  // Step 1: Extract text from image (OCR simulation)
+  console.log('📝 텍스트 추출 중...');
+  const extractedText = await extractTextFromImage(file);
+  
+  // Step 2: Classify the content using AI
+  console.log('🎯 카테고리 분류 중...');
+  const classification = await classifyText(extractedText);
+  
+  // Step 3: Generate smart summary
+  console.log('📋 요약 생성 중...');
+  const summary = await generateSummary(extractedText, classification.category);
+  
+  // Step 4: Extract relevant links
+  console.log('🔗 관련 링크 검색 중...');
+  const relatedLinks = await extractRelevantLinks(extractedText, classification.category);
+  
+  // Step 5: Generate smart tags
+  console.log('🏷️ 태그 생성 중...');
+  const tags = await generateTags(extractedText, classification.category);
+  
+  // Create title based on classification
+  const categoryLabels = {
+    recipe: '레시피',
+    news: '뉴스',
+    shopping: '쇼핑',
+    study: '학습',
+    misc: '메모'
+  };
+  
+  const title = `${categoryLabels[classification.category]} - ${file.name.replace(/\.[^/.]+$/, '')}`;
+  
+  console.log('✅ AI 분석 완료:', {
+    category: classification.category,
+    confidence: `${(classification.confidence * 100).toFixed(1)}%`,
+    tags: tags.length
+  });
 
   const captureItem: CaptureItem = {
     id: `capture_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     title,
-    summary: `${file.name} 파일에서 추출된 내용입니다. 실제 AI 분석을 위해서는 Supabase 연동 후 AI API를 설정해주세요.`,
-    category,
-    extractedText: `파일명: ${file.name}\n크기: ${(file.size / 1024).toFixed(1)}KB\n형식: ${file.type}\n업로드 시간: ${new Date().toLocaleString('ko-KR')}\n\n※ 실제 텍스트 추출을 위해서는 OCR API 연동이 필요합니다.`,
-    relatedLinks: [],
+    summary: `${summary} (AI 신뢰도: ${(classification.confidence * 100).toFixed(1)}%)`,
+    category: classification.category,
+    extractedText: `🤖 AI 분석 결과:\n분류 이유: ${classification.reasoning}\n\n📝 추출된 내용:\n${extractedText}`,
+    relatedLinks,
     date: new Date(),
     imageUrl,
     fileName: file.name,
     fileSize: file.size,
     processingStatus: 'completed',
-    tags: [category, '업로드됨']
+    tags: [...tags, `AI-${classification.category}`, `신뢰도-${(classification.confidence * 100).toFixed(0)}%`]
   };
 
   return captureItem;
