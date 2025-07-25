@@ -2,9 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Snap Sort Buddy Design System - Mobile-first, smart organization
 All colors MUST be HSL.
 */
+
+/* Beautiful gradients and colors for smart capture app */
+:root {
+  /* Brand colors - Modern tech aesthetic */
+  --primary: 240 73% 59%;  /* Vibrant blue */
+  --primary-glow: 240 100% 70%;
+  --primary-dark: 240 73% 45%;
+  
+  /* Category colors */
+  --category-news: 15 86% 58%;     /* Orange for news */
+  --category-recipe: 142 71% 45%;   /* Green for recipes */
+  --category-shopping: 271 81% 56%; /* Purple for shopping */
+  --category-study: 198 89% 48%;    /* Blue for study */
+  --category-misc: 215 14% 52%;     /* Gray for misc */
+  
+  /* Beautiful gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  --gradient-capture: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(271 81% 56%) 100%);
+  
+  /* Glass morphism effects */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  
+  /* Shadows with primary color */
+  --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-floating: 0 20px 60px rgba(0, 0, 0, 0.15);
+  
+  /* Smooth transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
 
 @layer base {
   :root {
