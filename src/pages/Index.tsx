@@ -4,10 +4,13 @@ import { CategoryCard } from '@/components/CategoryCard';
 import { FilterTabs } from '@/components/FilterTabs';
 import { SearchBar } from '@/components/SearchBar';
 import { AutoCapture } from '@/components/AutoCapture';
-import { Sparkles, Zap, Plus, Download, Trash2, Brain } from 'lucide-react';
+import { AuthDialog } from '@/components/AuthDialog';
+import { Sparkles, Zap, Plus, Download, Trash2, Brain, Wifi, WifiOff, Cloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { OpenAISettings } from '@/components/OpenAISettings';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { useCloudSync } from '@/hooks/useCloudSync';
 import {
   Popover,
   PopoverContent,
@@ -107,10 +110,59 @@ const mockCaptureData: CaptureItem[] = [
 
 const Index = () => {
   const { toast } = useToast();
+  const { user, loading, signIn, signUp, signOut } = useAuth();
+  const { isOnline, syncStatus, syncToCloud, syncFromCloud, deleteFromCloud } = useCloudSync(user);
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [captureData, setCaptureData] = useLocalStorage<CaptureItem[]>('snap-sort-captures', mockCaptureData);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Sync data when user logs in or comes online
+  useEffect(() => {
+    const handleSync = async () => {
+      if (user && isOnline) {
+        try {
+          const cloudData = await syncFromCloud();
+          if (cloudData.length > 0) {
+            // Merge cloud data with local data (cloud data takes precedence)
+            const localIds = new Set(captureData.map(item => item.id));
+            const newItems = cloudData.filter(item => !localIds.has(item.id));
+            const updatedItems = captureData.map(localItem => {
+              const cloudItem = cloudData.find(item => item.id === localItem.id);
+              return cloudItem || localItem;
+            });
+            const mergedData = [...updatedItems, ...newItems];
+            setCaptureData(mergedData);
+            
+            if (newItems.length > 0) {
+              toast({
+                title: "클라우드 동기화 완료",
+                description: `${newItems.length}개의 새로운 항목을 동기화했습니다.`,
+                duration: 3000,
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Auto sync failed:', error);
+        }
+      }
+    };
+
+    if (!loading) {
+      handleSync();
+    }
+  }, [user, isOnline, loading]);
+
+  // Auto-sync to cloud when data changes (if user is logged in)
+  useEffect(() => {
+    if (user && isOnline && captureData.length > 0) {
+      const timeoutId = setTimeout(() => {
+        syncToCloud(captureData);
+      }, 2000); // Debounce sync by 2 seconds
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [captureData, user, isOnline]);
 
   // Calculate counts for each category
   const categoryCounts = {
@@ -163,8 +215,18 @@ const Index = () => {
     }
   };
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
     setCaptureData(prev => prev.filter(item => item.id !== id));
+    
+    // Also delete from cloud if user is logged in
+    if (user && isOnline) {
+      try {
+        await deleteFromCloud(id);
+      } catch (error) {
+        console.error('Failed to delete from cloud:', error);
+      }
+    }
+    
     toast({
       title: "삭제 완료",
       description: "캡쳐 항목이 삭제되었습니다.",
@@ -212,6 +274,30 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            {/* Network Status */}
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              {isOnline ? (
+                <Wifi className="w-4 h-4 text-green-500" />
+              ) : (
+                <WifiOff className="w-4 h-4 text-red-500" />
+              )}
+            </div>
+            
+            {/* Sync Status */}
+            {user && (
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                {syncStatus === 'syncing' && <Cloud className="w-4 h-4 animate-pulse text-blue-500" />}
+                {syncStatus === 'error' && <Cloud className="w-4 h-4 text-red-500" />}
+                {syncStatus === 'idle' && isOnline && <Cloud className="w-4 h-4 text-green-500" />}
+              </div>
+            )}
+            
+            <AuthDialog 
+              user={user}
+              onSignIn={signIn}
+              onSignUp={signUp}
+              onSignOut={signOut}
+            />
             <OpenAISettings />
             
             <Button 
