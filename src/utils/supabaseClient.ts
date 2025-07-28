@@ -1,10 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// For Lovable's native Supabase integration, try these environment variable names
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 
+                   import.meta.env.SUPABASE_URL || 
+                   import.meta.env.PUBLIC_SUPABASE_URL;
+
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 
+                       import.meta.env.SUPABASE_ANON_KEY || 
+                       import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and Anon Key are required');
+  console.error('Available env vars:', Object.keys(import.meta.env));
+  throw new Error(`Supabase URL and Anon Key are required. Got URL: ${!!supabaseUrl}, Key: ${!!supabaseAnonKey}`);
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
