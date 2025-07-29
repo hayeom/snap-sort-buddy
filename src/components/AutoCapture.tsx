@@ -21,6 +21,7 @@ import { screenshotMonitor, ScreenshotFile } from '@/utils/screenshotMonitor';
 import { processCaptureFile } from '@/utils/captureProcessor';
 import { CaptureItem } from '@/types/capture';
 import { Capacitor } from '@capacitor/core';
+import { Device } from '@capacitor/device';
 
 interface AutoCaptureProps {
   onNewCapture: (item: CaptureItem) => void;
@@ -35,13 +36,39 @@ export const AutoCapture = ({ onNewCapture }: AutoCaptureProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    setIsNativeApp(Capacitor.isNativePlatform());
-    
-    if (Capacitor.isNativePlatform()) {
-      initializeMonitor();
-      loadRecentScreenshots();
-    }
+    checkPlatform();
   }, []);
+
+  const checkPlatform = async () => {
+    try {
+      // Device 플러그인으로 더 정확한 플랫폼 감지
+      const info = await Device.getInfo();
+      const isNative = Capacitor.isNativePlatform() || info.platform === 'ios' || info.platform === 'android';
+      
+      console.log('Platform check:', {
+        isNativePlatform: Capacitor.isNativePlatform(),
+        devicePlatform: info.platform,
+        isNative
+      });
+      
+      setIsNativeApp(isNative);
+      
+      if (isNative) {
+        initializeMonitor();
+        loadRecentScreenshots();
+      }
+    } catch (error) {
+      console.error('플랫폼 확인 실패:', error);
+      // 오류 시 Capacitor 기본값 사용
+      const fallbackNative = Capacitor.isNativePlatform();
+      setIsNativeApp(fallbackNative);
+      
+      if (fallbackNative) {
+        initializeMonitor();
+        loadRecentScreenshots();
+      }
+    }
+  };
 
   const initializeMonitor = async () => {
     const success = await screenshotMonitor.initialize();
