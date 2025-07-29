@@ -4,11 +4,7 @@ const config: CapacitorConfig = {
   appId: 'app.lovable.f9ff194194524ca5a80186a93b47a442',
   appName: 'snap-sort-buddy',
   webDir: 'dist',
-  bundledWebRuntime: false,
-  server: {
-    url: 'https://f9ff1941-9452-4ca5-a801-86a93b47a442.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  }
+  bundledWebRuntime: false
 };
 
 export default config;
