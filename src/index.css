@@ -127,7 +127,6 @@ Premium aesthetic with dark-first approach
   }
 
   html {
-    color-scheme: dark;
     @apply scroll-smooth;
   }
 
