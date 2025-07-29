@@ -261,168 +261,63 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/5">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-6">
-              <div className="relative">
-                <img 
-                  src={heroImage} 
-                  alt="Snap Sort Buddy Hero" 
-                  className="w-32 h-32 rounded-3xl shadow-2xl object-cover border-4 border-white/20"
-                />
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-primary-foreground" />
-                </div>
-              </div>
+    <div className="min-h-screen bg-white text-black p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Snap Sort Buddy</h1>
+        
+        <div className="mb-6">
+          <p className="text-lg mb-4">
+            스크린샷을 스마트하게 분류하고 관리하세요.
+          </p>
+          
+          <div className="flex gap-4 mb-6">
+            <div className="text-sm">
+              <span>사용자: </span>
+              <span className="font-medium">{user ? user.email : '게스트'}</span>
             </div>
-            
-            <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-secondary bg-clip-text text-transparent mb-4">
-              Snap Sort Buddy
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              스크린샷을 스마트하게 분류하고 관리하세요. AI가 자동으로 내용을 분석하여 
-              카테고리별로 정리해드립니다.
-            </p>
-
-            {/* Status Bar */}
-            <div className="flex flex-wrap items-center justify-center gap-4 mb-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                {isOnline ? (
-                  <Wifi className="w-4 h-4 text-green-500" />
-                ) : (
-                  <WifiOff className="w-4 h-4 text-red-500" />
-                )}
-                <span>{isOnline ? '온라인' : '오프라인'}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Cloud className="w-4 h-4" />
-                <span>{user ? user.email : '게스트'}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Brain className="w-4 h-4" />
-                <span>{captureData.length}개 캡쳐</span>
-              </div>
-              
-              {syncStatus && (
-                <div className="flex items-center gap-2 text-blue-500">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  <span>{syncStatus}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <AuthDialog
-                user={user}
-                onSignIn={signIn}
-                onSignUp={signUp}
-                onSignOut={signOut}
-              />
-              
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Zap className="w-4 h-4 mr-2" />
-                    AI 설정
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <OpenAISettings />
-                </PopoverContent>
-              </Popover>
-
-              <Button onClick={handleExportData} variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                내보내기
-              </Button>
-
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    전체 삭제
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>모든 데이터를 삭제하시겠습니까?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      이 작업은 되돌릴 수 없습니다. 모든 캡쳐 데이터가 영구적으로 삭제됩니다.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>취소</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleClearAllData}>
-                      삭제
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+            <div className="text-sm">
+              <span>캡쳐 개수: </span>
+              <span className="font-medium">{captureData.length}</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Upload Section */}
-        <div className="mb-8">
+        <div className="space-y-6">
           <CaptureUpload onFileUpload={handleFileUpload} />
-        </div>
-
-        {/* Auto Capture Section */}
-        <div className="mb-8">
+          
           <AutoCapture onNewCapture={(item) => setCaptureData(prev => [item, ...prev])} />
-        </div>
-
-        {/* Search and Filter */}
-        <div className="mb-6 space-y-4">
+          
           <SearchBar 
             onSearch={setSearchQuery}
-            placeholder="캡쳐 내용, 제목, 태그로 검색..."
+            placeholder="검색..."
           />
+          
           <FilterTabs 
             activeFilter={activeFilter} 
             onFilterChange={setActiveFilter}
             counts={categoryCounts}
           />
-        </div>
-
-        {/* Results */}
-        <div className="space-y-4">
-          {filteredData.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                <Plus className="w-8 h-8 text-muted-foreground" />
+          
+          <div className="space-y-4">
+            {filteredData.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">데이터가 없습니다.</p>
               </div>
-              <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                {searchQuery || activeFilter !== 'all' 
-                  ? '검색 결과가 없습니다' 
-                  : '첫 캡쳐를 추가해보세요'}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {searchQuery || activeFilter !== 'all'
-                  ? '다른 검색어나 필터를 사용해보세요'
-                  : '스크린샷을 업로드하거나 자동 캡쳐를 시작하세요'}
-              </p>
-            </div>
-          ) : (
-            filteredData.map((item) => (
-              <CategoryCard 
-                key={item.id} 
-                {...item}
-                onDelete={() => handleDeleteItem(item.id)}
-              />
-            ))
-          )}
+            ) : (
+              filteredData.map((item) => (
+                <div key={item.id} className="border p-4 rounded">
+                  <h3 className="font-bold">{item.title}</h3>
+                  <p className="text-gray-600">{item.summary}</p>
+                  <button 
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="mt-2 text-red-500 text-sm"
+                  >
+                    삭제
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
