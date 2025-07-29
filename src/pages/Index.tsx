@@ -261,198 +261,36 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with Upload Menu */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-glass border-b border-white/10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">Snap Sort Buddy</span>
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-              {captureData.length}개 저장됨
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {/* Network Status */}
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              {isOnline ? (
-                <Wifi className="w-4 h-4 text-green-500" />
-              ) : (
-                <WifiOff className="w-4 h-4 text-red-500" />
-              )}
-            </div>
-            
-            {/* Sync Status */}
-            {user && (
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                {syncStatus === 'syncing' && <Cloud className="w-4 h-4 animate-pulse text-blue-500" />}
-                {syncStatus === 'error' && <Cloud className="w-4 h-4 text-red-500" />}
-                {syncStatus === 'idle' && isOnline && <Cloud className="w-4 h-4 text-green-500" />}
-              </div>
-            )}
-            
-            <AuthDialog 
-              user={user}
-              onSignIn={signIn}
-              onSignUp={signUp}
-              onSignOut={signOut}
-            />
-            <OpenAISettings />
-            
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleExportData}
-              className="flex items-center gap-1"
-            >
-              <Download className="h-4 w-4" />
-              내보내기
-            </Button>
-            
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center gap-1 text-red-600 border-red-200 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  전체삭제
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    모든 캡쳐 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>취소</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
-                    삭제
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  disabled={isUploading}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  {isUploading ? '업로드 중...' : '캡쳐 업로드'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-96 p-4 bg-gradient-glass backdrop-blur-glass border-white/10">
-                <CaptureUpload onFileUpload={handleFileUpload} />
-              </PopoverContent>
-            </Popover>
-          </div>
+    <div className="min-h-screen" style={{ backgroundColor: '#ffffff', color: '#000000' }}>
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>Snap Sort Buddy 테스트</h1>
+        <p style={{ fontSize: '16px', marginBottom: '20px' }}>
+          iPhone에서 이 텍스트가 보이나요?
+        </p>
+        <div style={{ 
+          backgroundColor: '#f0f0f0', 
+          padding: '15px', 
+          borderRadius: '8px',
+          margin: '20px 0'
+        }}>
+          <p>현재 시간: {new Date().toLocaleString()}</p>
+          <p>캡쳐 데이터 개수: {captureData.length}</p>
+          <p>사용자: {user ? '로그인됨' : '로그아웃됨'}</p>
         </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-hero opacity-95" />
-        
-        <div className="relative container mx-auto px-4 py-24 text-center text-white">
-          <div className="flex items-center justify-center gap-3 mb-8 animate-fade-in-up">
-            <Sparkles className="h-10 w-10 animate-pulse-glow text-primary-variant" />
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-white to-primary-variant bg-clip-text text-transparent">
-              Snap Sort Buddy
-            </h1>
-            <Zap className="h-10 w-10 animate-pulse-glow text-primary-variant" />
-          </div>
-          
-          <p className="text-xl md:text-2xl text-white/95 mb-12 max-w-4xl mx-auto font-light leading-relaxed animate-fade-in-up">
-            스마트폰 캡쳐를 AI가 자동으로 분석하고 <br className="hidden md:block" />
-            주제별로 정리해주는 똑똑한 도우미
-          </p>
-          
-          <div className="flex flex-wrap justify-center gap-6 mb-16 animate-scale-in-soft">
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
-              <span className="text-2xl">🤖</span>
-              <span className="font-medium">AI 자동 분석</span>
-            </div>
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
-              <span className="text-2xl">📱</span>
-              <span className="font-medium">원본 자동 삭제</span>
-            </div>
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-glass px-6 py-3 rounded-2xl border border-white/20 shadow-glass hover:bg-white/15 transition-all duration-300">
-              <span className="text-2xl">🔍</span>
-              <span className="font-medium">빠른 검색</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Auto Capture Section */}
-      <section className="container mx-auto px-4 py-8">
-        <AutoCapture onNewCapture={(item) => setCaptureData(prev => [item, ...prev])} />
-      </section>
-
-      {/* Main Content Section */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="space-y-10">
-          {/* Search and Filter Controls */}
-          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between p-6 bg-gradient-glass backdrop-blur-glass rounded-2xl border border-white/10 shadow-glass">
-            <SearchBar onSearch={setSearchQuery} />
-            <div className="w-full lg:w-auto">
-              <FilterTabs 
-                activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
-                counts={categoryCounts}
-              />
-            </div>
-          </div>
-
-          {/* Results Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredData.map((item, index) => (
-              <div 
-                key={item.id} 
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CategoryCard 
-                  {...item} 
-                  onDelete={() => handleDeleteItem(item.id)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {filteredData.length === 0 && captureData.length > 0 && (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-3">🔍</div>
-              <h3 className="text-lg font-semibold mb-2">검색 결과가 없습니다</h3>
-              <p className="text-muted-foreground text-sm">
-                다른 키워드로 검색하거나 필터를 변경해보세요.
-              </p>
-            </div>
-          )}
-
-          {captureData.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-3">📱</div>
-              <h3 className="text-lg font-semibold mb-2">캡쳐된 내용이 없습니다</h3>
-              <p className="text-muted-foreground text-sm">
-                상단의 '캡쳐 업로드' 버튼을 눌러 첫 번째 캡쳐를 업로드해보세요!
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
+        <button 
+          style={{
+            backgroundColor: '#007AFF',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px'
+          }}
+          onClick={() => alert('버튼이 작동합니다!')}
+        >
+          테스트 버튼
+        </button>
+      </div>
     </div>
   );
 };
